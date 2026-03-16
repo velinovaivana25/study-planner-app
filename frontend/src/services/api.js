@@ -2,7 +2,7 @@ import axios from "axios"
 
 //  Create an axios instance 
 const api = axios.create({
-baseURL: "http://localhost:5000/api",
+baseURL: "https://study-planner-app-1-12bu.onrender.com/api",
   timeout: 10000,
 })
 
