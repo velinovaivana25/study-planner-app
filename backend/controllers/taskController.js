@@ -1,68 +1,50 @@
 
-const Task = require("../models/Task")
 
-// GET all tasks
-const getTasks = async (req,res)=>{
-try{
+import Task from "../models/Task.js";
 
-const tasks = await Task.find().populate("subject")
 
-res.json(tasks)
+// Get all tasks, including their related subject
+export const getTasks = async (req, res) => {
+    try {
+        const tasks = await Task.find().populate("subject");
+        res.json(tasks);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-}catch(err){
-res.status(500).json({error:err.message})
-}
-}
 
-// CREATE task
-const createTask = async (req,res)=>{
-try{
+// Create a new task
+export const createTask = async (req, res) => {
+    try {
+        const task = new Task(req.body);
+        await task.save();
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-const task = new Task(req.body)
 
-await task.save()
+// Delete a task by its ID
+export const deleteTask = async (req, res) => {
+    try {
+        await Task.findByIdAndDelete(req.params.id);
+        res.json({ message: "Task deleted" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-res.json(task)
 
-}catch(err){
-res.status(500).json({error:err.message})
-}
-}
-
-// DELETE task
-const deleteTask = async (req,res)=>{
-try{
-
-await Task.findByIdAndDelete(req.params.id)
-
-res.json({message:"Task deleted"})
-
-}catch(err){
-res.status(500).json({error:err.message})
-}
-}
-
-// TOGGLE complete
-const toggleTask = async (req,res)=>{
-try{
-
-const task = await Task.findById(req.params.id)
-
-task.completed = !task.completed
-
-await task.save()
-
-res.json(task)
-
-}catch(err){
-res.status(500).json({error:err.message})
-}
-}
-
-module.exports = {
-getTasks,
-createTask,
-deleteTask,
-toggleTask
-}
-
+// Toggle the completed status of a task
+export const toggleTask = async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        task.completed = !task.completed;
+        await task.save();
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

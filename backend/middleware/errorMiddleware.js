@@ -1,13 +1,12 @@
+import express from "express"; 
 
-const errorHandler = (err,req,res,next)=>{
 
-console.error(err.stack)
+// Error handling middleware
+export const errorHandler = (err, req, res, next) => {
 
-res.status(500).json({
-message: err.message || "Server Error"
-})
+    console.error(err.stack);
 
-}
-
-module.exports = errorHandler
-
+    res.status(500).json({
+        message: err.message || "Server Error"
+    });
+};

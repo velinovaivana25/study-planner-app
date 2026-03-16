@@ -1,63 +1,50 @@
-const express = require("express")
-const router = express.Router()
-const Subject = require("../models/Subject")
-const authMiddleware = require("../middleware/authMiddleware")
+// Routes for managing subjects
 
-// ADD SUBJECT
-router.post("/", authMiddleware, async(req,res)=>{
+import express from "express";
+import Subject from "../models/Subject.js";
+import { protect } from "../middleware/authMiddleware.js";
 
-try{
+const router = express.Router();
 
-const subject = new Subject({
-name:req.body.name,
-user:req.user.id
-})
+// Add a new subject
+router.post("/", protect, async (req, res) => {
+    try {
+        const subject = new Subject({
+            name: req.body.name,
+            user: req.user.id,
+        });
 
-const savedSubject = await subject.save()
+        const savedSubject = await subject.save();
+        res.json(savedSubject);
+    } catch (err) {
+        res.status(500).json({ message: "Error adding subject" });
+    }
+});
 
-res.json(savedSubject)
+// Get all subjects for logged-in user
+router.get("/", protect, async (req, res) => {
+    try {
+        const subjects = await Subject.find({ user: req.user.id });
+        res.json(subjects);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching subjects" });
+    }
+});
 
-}catch(err){
-res.status(500).json({message:"Error adding subject"})
-}
+// Update a subject
+router.put("/:id", protect, async (req, res) => {
+    const subject = await Subject.findByIdAndUpdate(
+        req.params.id,
+        { name: req.body.name },
+        { new: true }
+    );
+    res.json(subject);
+});
 
-})
+// Delete a subject
+router.delete("/:id", protect, async (req, res) => {
+    await Subject.findByIdAndDelete(req.params.id);
+    res.json({ message: "Subject deleted" });
+});
 
-// GET SUBJECTS
-router.get("/", authMiddleware, async(req,res)=>{
-
-try{
-
-const subjects = await Subject.find({user:req.user.id})
-
-res.json(subjects)
-
-}catch(err){
-res.status(500).json({message:"Error fetching subjects"})
-}
-
-})
-
-// UPDATE subject
-router.put("/:id", authMiddleware, async (req,res)=>{
-
-const subject = await Subject.findByIdAndUpdate(
-req.params.id,
-{name:req.body.name},
-{new:true}
-)
-
-res.json(subject)
-
-})
-
-// DELETE subject
-router.delete("/:id", authMiddleware, async (req,res)=>{
-
-await Subject.findByIdAndDelete(req.params.id)
-
-res.json({message:"Subject deleted"})
-
-})
-
-module.exports = router
+export default router;

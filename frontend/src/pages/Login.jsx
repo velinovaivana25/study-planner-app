@@ -1,80 +1,80 @@
-
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import api from "../services/api"
 
-function Login(){
+function Login() {
 
-const [email,setEmail] = useState("")
-const [password,setPassword] = useState("")
-const navigate = useNavigate()
+  const navigate = useNavigate()
 
-const handleLogin = async(e)=>{
+  
+  const [email, setEmail] = useState("")       // Email input
+  const [password, setPassword] = useState("") // Password input
 
-e.preventDefault()
+  //  Handle login form submission 
+  const handleLogin = async (e) => {
+    e.preventDefault() 
 
-try{
+    try {
+      const res = await api.post("/auth/login", { email, password })
 
-const res = await api.post("/auth/login",{email,password})
+      localStorage.setItem("token", res.data.token)
 
-localStorage.setItem("token",res.data.token)
+      navigate("/dashboard")
 
-navigate("/dashboard")
+    } catch (err) {
+      alert("Login failed")
+    }
+  }
 
-}catch(err){
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-alert("Login failed")
+      {/*  Login Form  */}
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-xl shadow-lg w-96"
+      >
+        {/* Form title */}
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Login
+        </h2>
 
-}
+        {/* Email input */}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border w-full p-2 rounded mb-4"
+        />
 
-}
+        {/* Password input */}
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border w-full p-2 rounded mb-6"
+        />
 
-return(
+        {/* Submit button */}
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
+        >
+          Login
+        </button>
 
-<div className="min-h-screen flex items-center justify-center bg-gray-100">
-
-<form
-onSubmit={handleLogin}
-className="bg-white p-8 rounded-xl shadow-lg w-96"
->
-
-<h2 className="text-2xl font-bold mb-6 text-center">
-Login
-</h2>
-
-<input
-placeholder="Email"
-onChange={(e)=>setEmail(e.target.value)}
-className="border w-full p-2 rounded mb-4"
-/>
-
-<input
-type="password"
-placeholder="Password"
-onChange={(e)=>setPassword(e.target.value)}
-className="border w-full p-2 rounded mb-6"
-/>
-
-<button
-className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
->
-Login
-</button>
-
-<p className="text-center mt-4 text-sm">
-Don't have an account?{" "}
-<Link to="/register" className="text-blue-500">
-Register
-</Link>
-</p>
-
-</form>
-
-</div>
-
-)
-
+        {/* Link to register page */}
+        <p className="text-center mt-4 text-sm">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-500">
+            Register
+          </Link>
+        </p>
+      </form>
+    </div>
+  )
 }
 
 export default Login
-

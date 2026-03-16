@@ -1,44 +1,23 @@
+import Subject from "../models/Subject.js";
 
-const Subject = require("../models/Subject")
+// Get all subjects from the database
+export const getSubjects = async (req, res) => {
+    try {
+        const subjects = await Subject.find();
+        res.json(subjects);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-// GET subjects
-const getSubjects = async (req,res)=>{
 
-try{
-
-const subjects = await Subject.find()
-
-res.json(subjects)
-
-}catch(err){
-
-res.status(500).json({error:err.message})
-
-}
-
-}
-
-// CREATE subject
-const createSubject = async (req,res)=>{
-
-try{
-
-const subject = new Subject(req.body)
-
-await subject.save()
-
-res.json(subject)
-
-}catch(err){
-
-res.status(500).json({error:err.message})
-
-}
-
-}
-
-module.exports = {
-getSubjects,
-createSubject
-}
-
+// Create a new subject in the database
+export const createSubject = async (req, res) => {
+    try {
+        const subject = new Subject(req.body);
+        await subject.save();
+        res.json(subject);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

@@ -1,81 +1,80 @@
-
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../services/api"
 
-function Register(){
+function Register() {
 
-const [name,setName] = useState("")
-const [email,setEmail] = useState("")
-const [password,setPassword] = useState("")
+  const navigate = useNavigate()
 
-const navigate = useNavigate()
+  const [name, setName] = useState("")         // Name input
+  const [email, setEmail] = useState("")       // Email input
+  const [password, setPassword] = useState("") // Password input
 
-const handleRegister = async(e)=>{
+  const handleRegister = async (e) => {
+    e.preventDefault() 
 
-e.preventDefault()
+    try {
+      await api.post("/auth/register", { name, email, password })
 
-try{
+      alert("User created")
 
-await api.post("/auth/register",{name,email,password})
+      navigate("/")
 
-alert("User created")
+    } catch (err) {
+      alert("Register failed")
+    }
+  }
 
-navigate("/")
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-}catch(err){
+      {/*  Registration Form  */}
+      <form
+        onSubmit={handleRegister}
+        className="bg-white p-8 rounded-xl shadow-lg w-96"
+      >
+        {/* Form title */}
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Register
+        </h2>
 
-alert("Register failed")
+        {/* Name input */}
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border w-full p-2 rounded mb-4"
+        />
 
-}
+        {/* Email input */}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="border w-full p-2 rounded mb-4"
+        />
 
-}
+        {/* Password input */}
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border w-full p-2 rounded mb-6"
+        />
 
-return(
-
-<div className="min-h-screen flex items-center justify-center bg-gray-100">
-
-<form
-onSubmit={handleRegister}
-className="bg-white p-8 rounded-xl shadow-lg w-96"
->
-
-<h2 className="text-2xl font-bold mb-6 text-center">
-Register
-</h2>
-
-<input
-placeholder="Name"
-onChange={(e)=>setName(e.target.value)}
-className="border w-full p-2 rounded mb-4"
-/>
-
-<input
-placeholder="Email"
-onChange={(e)=>setEmail(e.target.value)}
-className="border w-full p-2 rounded mb-4"
-/>
-
-<input
-type="password"
-placeholder="Password"
-onChange={(e)=>setPassword(e.target.value)}
-className="border w-full p-2 rounded mb-6"
-/>
-
-<button
-className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
->
-Register
-</button>
-
-</form>
-
-</div>
-
-)
-
+        {/* Submit button */}
+        <button
+          type="submit"
+          className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
+        >
+          Register
+        </button>
+      </form>
+    </div>
+  )
 }
 
 export default Register
-
